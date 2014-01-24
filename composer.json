@@ -1,0 +1,22 @@
+{
+    "name": "bc/model",
+    "description": "base for modeling (model, data map, etc.)",
+    "type": "library",
+    "version": "0.1",
+    "license": "MIT",
+    "homepage": "https://github.com/theinpu/model",
+    "authors": [
+        {
+            "name": "inpu",
+            "email": "theinpu@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3"
+    },
+    "autoload": {
+        "psr-0": {
+            "bc\\model": "."
+        }
+    }
+}
