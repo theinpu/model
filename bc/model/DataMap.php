@@ -9,8 +9,7 @@ namespace bc\model;
 
 use bc\pdo\PDOHelper;
 
-abstract class DataMap
-{
+abstract class DataMap {
 
     protected $findOneSql = '';
     protected $findAllSql = '';
@@ -70,24 +69,27 @@ abstract class DataMap
 
     /**
      * @param Model $item
+     *
      * @return array
      */
     protected abstract function getInsertBindings($item);
 
     /**
      * @param Model $item
+     *
      * @return array
      */
     protected abstract function getUpdateBindings($item);
 
     /**
      * @param int $id
+     *
      * @return Model | null
      */
     public function get($id) {
         $this->findOneStatement->bindValue(':id', $id);
         $item = $this->fetchByStatement($this->findOneStatement);
-        if (count($item) == 0) return null;
+        if(count($item) == 0) return null;
         return $item[0];
     }
 
@@ -100,15 +102,16 @@ abstract class DataMap
 
     /**
      * @param array|int $ids
+     *
      * @return Model[]
      */
     public function getList($ids) {
-        if (!is_array($ids)) {
+        if(!is_array($ids)) {
             $ids = array($ids);
         }
         $placeHolder = implode(',', array_fill(0, count($ids), '?'));
         $this->findByIdsStatement = $this->prepare(str_replace(':ids', $placeHolder, $this->findByIdsSql));
-        foreach ($ids as $k => $v) {
+        foreach($ids as $k => $v) {
             $this->findByIdsStatement->bindValue($k + 1, $v);
         }
         return $this->fetchByStatement($this->findByIdsStatement);
@@ -117,15 +120,16 @@ abstract class DataMap
     /**
      * @param int $offset
      * @param int $count
+     *
      * @return Model[]
      */
     public function getPartial($offset, $count) {
-        $sql = $this->findAllSql . ' LIMIT ';
+        $sql = $this->findAllSql.' LIMIT ';
         if($count < 1) {
             $count = 1;
         }
-        if ($offset > 0) {
-            $sql .= $offset . ',' . $count;
+        if($offset > 0) {
+            $sql .= $offset.','.$count;
         } else {
             $sql .= $count;
         }
@@ -145,16 +149,17 @@ abstract class DataMap
 
     /**
      * @param Model $item
+     *
      * @return void
      */
     public function save(Model $item) {
-        if ($item instanceof NullObject) return;
+        if($item instanceof NullObject) return;
         $this->prepareItem($item);
-        if (is_null($item->getId())) {
+        if(is_null($item->getId())) {
             $this->insert($item);
             $this->onInsert($item);
         } else {
-            if ($item->isChanged()) {
+            if($item->isChanged()) {
                 $this->update($item);
                 $this->onUpdate($item);
             }
@@ -165,6 +170,7 @@ abstract class DataMap
 
     /**
      * @param $id
+     *
      * @return void
      */
     public function delete($id) {
@@ -178,7 +184,11 @@ abstract class DataMap
     protected function insert($item) {
         $bindings = $this->getInsertBindings($item);
         foreach($bindings as $key => $value) {
-            $this->insertStatement->bindValue($key, $value);
+            if(is_array($value)) {
+                $this->insertStatement->bindValue($key, $value[0], $value[1]);
+            } else {
+                $this->insertStatement->bindValue($key, $value);
+            }
         }
         $this->insertStatement->execute();
         $item->setId($this->getPDO()->lastInsertId());
@@ -190,7 +200,11 @@ abstract class DataMap
     protected function update($item) {
         $bindings = $this->getUpdateBindings($item);
         foreach($bindings as $key => $value) {
-            $this->updateStatement->bindValue($key, $value);
+            if(is_array($value)) {
+                $this->updateStatement->bindValue($key, $value[0], $value[1]);
+            } else {
+                $this->updateStatement->bindValue($key, $value);
+            }
         }
         $this->updateStatement->bindValue(':id', $item->getId());
         $this->updateStatement->execute();
@@ -205,16 +219,17 @@ abstract class DataMap
 
     /**
      * @param \PDOStatement $stmt
-     * @param bool $asArray
+     * @param bool          $asArray
+     *
      * @return Model[] | array
      */
     protected function fetchByStatement($stmt, $asArray = false) {
         $stmt->execute();
-        if ($asArray || is_null($this->className)) {
+        if($asArray || is_null($this->className)) {
             $items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } else {
             $items = $stmt->fetchAll(\PDO::FETCH_CLASS, $this->className);
-            foreach ($items as &$item) {
+            foreach($items as &$item) {
                 $this->itemCallback($item);
             }
         }
@@ -224,17 +239,18 @@ abstract class DataMap
 
     /**
      * @param Model $item
+     *
      * @deprecated will be private
      */
     protected function itemCallback($item) {
-        if (is_array($item)) return;
+        if(is_array($item)) return;
         $this->beforeItemSetup($item);
         $fields = get_object_vars($item);
-        foreach ($fields as $field => $value) {
-            if (isset($item->$field)) {
-                if ($field == 'id') continue;
-                $method = 'set' . ucfirst($field);
-                if (method_exists($item, $method)) {
+        foreach($fields as $field => $value) {
+            if(isset($item->$field)) {
+                if($field == 'id') continue;
+                $method = 'set'.ucfirst($field);
+                if(method_exists($item, $method)) {
                     call_user_func(array($item, $method), $value);
                 }
                 unset($item->$field);
@@ -249,7 +265,7 @@ abstract class DataMap
      * @param Model $item
      */
     private function setItemId($item) {
-        if (is_null($item->getId())) {
+        if(is_null($item->getId())) {
             $item->setId($item->{'id'});
             unset($item->{'id'});
         }
@@ -284,25 +300,25 @@ abstract class DataMap
     }
 
     private function checkSql() {
-        if (empty($this->findOneSql)) {
+        if(empty($this->findOneSql)) {
             throw new \Exception('Need to set findOneSql');
         }
-        if (empty($this->findAllSql)) {
+        if(empty($this->findAllSql)) {
             throw new \Exception('Need to set findAllSql');
         }
-        if (empty($this->findByIdsSql)) {
+        if(empty($this->findByIdsSql)) {
             throw new \Exception('Need to set findByIdsSql');
         }
-        if (empty($this->countSql)) {
+        if(empty($this->countSql)) {
             throw new \Exception('Need to set countSql');
         }
-        if (empty($this->insertSql)) {
+        if(empty($this->insertSql)) {
             throw new \Exception('Need to set insertSql');
         }
-        if (empty($this->updateSql)) {
+        if(empty($this->updateSql)) {
             throw new \Exception('Need to set updateSql');
         }
-        if (empty($this->deleteSql)) {
+        if(empty($this->deleteSql)) {
             throw new \Exception('Need to set deleteSql');
         }
     }
@@ -316,7 +332,9 @@ abstract class DataMap
         $this->deleteStatement = $this->prepare($this->deleteSql);
     }
 
-    protected function beforeItemSetup(Model $item) {}
+    protected function beforeItemSetup(Model $item) {
+    }
 
-    protected function afterItemSetup(Model $item) {}
+    protected function afterItemSetup(Model $item) {
+    }
 } 
