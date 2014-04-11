@@ -30,7 +30,7 @@ class DummyDataMap extends DataMap {
      */
     protected function getInsertBindings($item) {
         return array(
-            ':title' => $item->getTitle()
+            ':title' => array($item->getTitle(), \PDO::PARAM_STR)
         );
     }
 

@@ -7,9 +7,10 @@
 
 namespace bc\tests\dummy;
 
+use bc\model\JSONExport;
 use bc\model\Model;
 
-class DummyModel extends Model {
+class DummyModel extends Model implements JSONExport {
 
     private $title;
 
@@ -26,6 +27,16 @@ class DummyModel extends Model {
      */
     public function getTitle() {
         return $this->title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getJSON() {
+        return json_encode(array(
+            'id'    => $this->getId(),
+            'title' => $this->getTitle(),
+        ));
     }
 
 } 

@@ -14,11 +14,15 @@ class BuilderTest extends \PHPUnit_Framework_TestCase {
 
     public function testCreate() {
         $item = DummyBuilder::create()
-            ->title('test')
-            ->build();
+                            ->title('test')
+                            ->build();
 
         $this->assertInstanceOf('bc\\tests\\dummy\\DummyModel', $item);
         $this->assertEquals('test', $item->getTitle());
+        $this->assertEquals(
+             json_encode(array('id' => null, 'title' => 'test')),
+             $item->getJSON()
+        );
     }
 
     /**
