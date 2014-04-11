@@ -14,4 +14,9 @@ interface JSONExport {
      */
     public function getJSON();
 
+    /**
+     * @return array
+     */
+    public function getArray();
+
 } 

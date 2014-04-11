@@ -33,10 +33,16 @@ class DummyModel extends Model implements JSONExport {
      * @return string
      */
     public function getJSON() {
-        return json_encode(array(
-            'id'    => $this->getId(),
-            'title' => $this->getTitle(),
-        ));
+        return json_encode($this->getArray());
     }
 
-} 
+    /**
+     * @return array
+     */
+    public function getArray() {
+        return array(
+            'id'    => $this->getId(),
+            'title' => $this->getTitle(),
+        );
+    }
+}
