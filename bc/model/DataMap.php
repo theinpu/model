@@ -239,12 +239,9 @@ abstract class DataMap {
 
     /**
      * @param Model $item
-     *
-     * @deprecated will be private
      */
-    protected function itemCallback($item) {
+    private function itemCallback($item) {
         if(is_array($item)) return;
-        $this->beforeItemSetup($item);
         $fields = get_object_vars($item);
         foreach($fields as $field => $value) {
             if(isset($item->$field)) {
@@ -256,6 +253,7 @@ abstract class DataMap {
                 unset($item->$field);
             }
         }
+        $this->beforeItemSetup($item);
         $this->setItemId($item);
         $this->afterItemSetup($item);
         $item->onLoad();
