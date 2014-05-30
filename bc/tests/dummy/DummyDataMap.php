@@ -17,7 +17,7 @@ class DummyDataMap extends DataMap {
     protected function initSql() {
         $this->findOneSql = "SELECT * FROM test_table WHERE id=:id";
         $this->findAllSql = "SELECT * FROM test_table";
-        $this->findByIdsSql = "SELECT * FROM test_table WHERE id IN (:ids)";
+        $this->findByIdsSql = "SELECT * FROM test_table WHERE id IN (:ids) ORDER BY FIELD (id, :ids)";
         $this->countSql = "SELECT count(id) FROM test_table";
         $this->insertSql = "INSERT INTO test_table (title) VALUES (:title)";
         $this->updateSql = "UPDATE test_table SET title=:title WHERE id=:id";

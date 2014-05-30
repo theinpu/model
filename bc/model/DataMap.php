@@ -109,10 +109,16 @@ abstract class DataMap {
         if(!is_array($ids)) {
             $ids = array($ids);
         }
-        $placeHolder = implode(',', array_fill(0, count($ids), '?'));
-        $this->findByIdsStatement = $this->prepare(str_replace(':ids', $placeHolder, $this->findByIdsSql));
+        $idsCount = count($ids);
+        $placeHolder = implode(',', array_fill(0, $idsCount, '?'));
+        $count = substr_count($this->findByIdsSql, ':ids');
+        $sql = str_replace(':ids', $placeHolder, $this->findByIdsSql);
+        $this->findByIdsStatement = $this->prepare($sql);
         foreach($ids as $k => $v) {
-            $this->findByIdsStatement->bindValue($k + 1, $v);
+            $this->findByIdsStatement->bindValue(($k + 1), $v);
+            if($count > 1) {
+                $this->findByIdsStatement->bindValue(($k + 1) + $idsCount, $v);
+            }
         }
         return $this->fetchByStatement($this->findByIdsStatement);
     }
