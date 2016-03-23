@@ -7,7 +7,7 @@
 
 namespace bc\model;
 
-abstract class Model {
+abstract class Model implements JSONExport {
 
     /**
      * @var int
@@ -50,6 +50,10 @@ abstract class Model {
 
     public function convert() {
         return $this->getId();
+    }
+
+    public function getArray() {
+        return array('id' => $this->getId());
     }
 
     protected function onChanged() {}

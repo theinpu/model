@@ -2,7 +2,7 @@
     "name": "bc/model",
     "description": "base for modeling (model, data map, etc.)",
     "type": "library",
-    "version": "0.1.2.3",
+    "version": "0.1.2.4",
     "license": "MIT",
     "homepage": "https://github.com/theinpu/model",
     "authors": [
