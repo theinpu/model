@@ -33,15 +33,21 @@ abstract class Model implements JSONExport {
         }
     }
 
+    /**
+     * @return int
+     */
     public function getId() {
         return $this->id;
     }
 
+    /**
+     * @param int $id
+     */
     public function setId($id) {
         if (!is_null($this->id)) {
             throw new \RuntimeException("You not allow to change " . get_class($this) . '::$id');
         }
-        $this->id = $id;
+        $this->id = (int)$id;
     }
 
     public function onCreate() {}
